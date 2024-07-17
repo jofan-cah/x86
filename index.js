@@ -6,27 +6,12 @@ const { createError } = require('http-errors');
 const app = express();
 const port = process.env.PORT;
 
+// Mengimpor routes
+const x86Routes = require('./routes/x86Routes');
 
-// Endpoint untuk memeriksa status pengguna di X86
-// Endpoint untuk memeriksa status pengguna di X86
-app.get('/api/isActiveUserX86', (req, res, next) => {
-  const idSubs = req.query.name; // Mendapatkan parameter name dari query string
+// Menggunakan routes
+app.use('/api', x86Routes);
 
-  axios.get(`${process.env.X86_HOST}/rest/ppp/active?name=${idSubs}`, {
-    auth: {
-      username: process.env.X86_USERNAME,
-      password: process.env.X86_PASSWORD
-    }
-  })
-    .then(response => {
-      res.json(response.data);
-    })
-    .catch(error => {
-      // Tangani error dengan melempar error HTTP atau logging ke sistem monitoring
-      console.error('Error checking pppoe status on X86', error.message);
-
-    });
-});
 
 app.get('/', (req, res) => {
   res.send('Hello World');

@@ -10,6 +10,7 @@ pids
 
 # Dependency directories
 node_modules/
+# config/
 
 # Optional npm cache directory
 .npm
