@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { checkUserByName, createUserAndProfile, getByName, sysns } = require('../src/controllers/chrController');
+const { createUserAndProfile, createUserAndProfile, getByName, sysns } = require('../src/controllers/chrController');
 
 // Route untuk memeriksa pengguna berdasarkan nama
-router.get('/checkUserByName', checkUserByName);
-router.post('/createUserAndProfile', createUserAndProfile);
-router.post('/getByName', getByName);
-router.post('/sysns', sysns);
+router.get('/checkUserByName', createUserAndProfile);
+router.get('/createUserAndProfile', createUserAndProfile);
+router.get('/getByName', getByName);
+router.get('/sysns', sysns);
 
 module.exports = router;

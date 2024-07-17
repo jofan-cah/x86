@@ -2,7 +2,7 @@ require('dotenv').config(); // Memuat konfigurasi dari file .env
 const express = require('express');
 const app = express();
 const port = process.env.PORT;
-const cors = require('cors'); //
+const cors = require('cors'); 
 
 // Mengimpor routes
 const x86Routes = require('./routes/x86Route');
@@ -13,9 +13,7 @@ app.use('/api/x86', x86Routes);
 app.use('/api/chr', chrRoutes);
 
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
-});
+
 
 app.listen(port, () => {
   console.log(`Server berjalan di http://localhost:${port}`);
