@@ -1,6 +1,9 @@
 const axios = require('axios');
 const createError = require('http-errors');
 
+const https = require('https');
+
+
 // Fungsi untuk memeriksa status pengguna di X86
 const checkIsActiveUserX86 = async (req, res, next) => {
   const idSubs = req.query.name; // Mendapatkan parameter name dari query string
@@ -12,7 +15,7 @@ const checkIsActiveUserX86 = async (req, res, next) => {
         password: process.env.X86_PASSWORD
       },
       httpsAgent: {
-        rejectUnauthorized: false // Nonaktifkan verifikasi sertifikat SSL
+        rejectUnauthorized: false
       }
     });
 
@@ -69,7 +72,29 @@ const kickUserX86 = async (req, res, next) => {
   }
 };
 
+const userQueueSimple = async (req, res, next) => {
+  const idSubs = req.query.name; // Mendapatkan parameter name dari query string
+
+  try {
+    const response = await axios.get(`${process.env.X86_HOST}/rest/ppp/active?name=<pppoe-${idSubs}>`, {
+      auth: {
+        username: process.env.X86_USERNAME,
+        password: process.env.X86_PASSWORD
+      },
+      httpsAgent: {
+        rejectUnauthorized: false // Nonaktifkan verifikasi sertifikat SSL
+      }
+    });
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error checking pppoe status on X86', error.message);
+    next(createError(500, 'Internal Server Error'));
+  }
+};
+
 module.exports = {
+  userQueueSimple,
   checkIsActiveUserX86,
   kickUserX86
 };

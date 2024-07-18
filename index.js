@@ -11,6 +11,7 @@ const maxnetDB = require('./config/db');
 const x86Routes = require('./routes/x86Route');
 const chrRoutes = require('./routes/chrRoute');
 app.use(cors());
+app.use(express.json());
 
 app.use('/api/x86', x86Routes);
 app.use('/api/chr', chrRoutes);
