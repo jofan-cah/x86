@@ -1,6 +1,6 @@
 const axios = require('axios');
 const createError = require('http-errors');
-
+const Subscription = require('../../models/subscriptionsModel')
 
 const createUserAndProfile = async (req, res, next) => {
   const { name, password, ipAddress, speed } = req.body;
@@ -163,8 +163,7 @@ const getByName = async (req, res, next) => {
       }
     }).then(response => response.data);
 
-    const subs = await Subscription.find(); // Ganti dengan cara Anda mengambil data Subscription, bisa saja menggunakan Mongoose atau ORM lain
-
+    const subs = await Subscription.find();
     for (const data of dataMikrotik) {
       if (subs.some(sub => sub.subscription_id === data.user)) {
         const subsUpdate = await Subscription.findOne({ subscription_id: data.user });
