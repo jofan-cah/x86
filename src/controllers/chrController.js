@@ -237,47 +237,47 @@ const createUserProfile = async (req, res) => {
 };
 
 
-const updateUserProfile = async (req, res) => {
-  try {
-    // Mengambil data dari body permintaan
-    const id = req.body[".id"];  // Gunakan notasi tanda kurung untuk mengakses ".id"
-    const profile = req.body.profile;
-    console.log(req.body)
+// const updateUserProfile = async (req, res) => {
+//   try {
+//     // Mengambil data dari body permintaan
+//     const id = req.body[".id"];  // Gunakan notasi tanda kurung untuk mengakses ".id"
+//     const profile = req.body.profile;
+//     console.log(req.body)
 
-    // Memeriksa apakah semua data yang diperlukan ada
-    if (!id || !profile) {
-      return res.status(400).json({ message: 'User and profile are required' });
-    }
+//     // Memeriksa apakah semua data yang diperlukan ada
+//     if (!id || !profile) {
+//       return res.status(400).json({ message: 'User and profile are required' });
+//     }
 
-    // Mengirim permintaan PUT ke endpoint CHR untuk memperbarui user profile
-    const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user-profile/${id}`, {
-      profile,
-    }, {
-      auth: {
-        username: process.env.ROUTER_API_USERNAME,
-        password: process.env.ROUTER_API_PASSWORD
-      },
-      httpsAgent: new https.Agent({
-        rejectUnauthorized: false
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    // Kirim respons ke klien
-    res.status(200).json({ message: 'User profile updated successfully', data: response.data });
-  } catch (error) {
-    console.error('Error updating user profile:', error.message);
+//     // Mengirim permintaan PUT ke endpoint CHR untuk memperbarui user profile
+//     const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user-profile/${id}`, {
+//       profile,
+//     }, {
+//       auth: {
+//         username: process.env.ROUTER_API_USERNAME,
+//         password: process.env.ROUTER_API_PASSWORD
+//       },
+//       httpsAgent: new https.Agent({
+//         rejectUnauthorized: false
+//       }),
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     });
+//     // Kirim respons ke klien
+//     res.status(200).json({ message: 'User profile updated successfully', data: response.data });
+//   } catch (error) {
+//     console.error('Error updating user profile:', error.message);
 
-    if (error.response) {
-      // Kesalahan berasal dari respons server
-      res.status(error.response.status).json({ message: error.response.data });
-    } else {
-      // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  }
-};
+//     if (error.response) {
+//       // Kesalahan berasal dari respons server
+//       res.status(error.response.status).json({ message: error.response.data });
+//     } else {
+//       // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
+//       res.status(500).json({ message: 'Internal Server Error' });
+//     }
+//   }
+// };
 
 
 const deleteUserProfile = async (req, res) => {

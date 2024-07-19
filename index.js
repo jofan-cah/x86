@@ -19,13 +19,6 @@ app.use('/api/chr', chrRoutes);
 
 // Root route
 app.get('/', async (req, res) => {
-  // try {
-  //   const subs = await Subscription.findAll(); // Await the promise
-  //   res.json(subs); // Send JSON response
-  // } catch (error) {
-  //   console.error('Error fetching subscriptions:', error);
-  //   res.status(500).send('Internal Server Error');
-  // }
 
   res.send('HALLO WORLD')
 });
