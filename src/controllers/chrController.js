@@ -4,56 +4,17 @@ const https = require('https');
 
 const Subscription = require('../../models/subscriptionsModel')
 
+const agent = require('../../helpers/http');
 
-const getUserByName = async (req, res) => {
-  try {
-    const { name } = req.params;
-    const routerApiUrl = process.env.ROUTER_API_URL;
+const routerApiUrl = process.env.ROUTER_API_URL;
 
-    const response = await axios.get(`${routerApiUrl}/rest/user-manager/user?name=${name}`);
 
-    // Kirim respons ke klien
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching user:', error.message);
-
-    if (error.response) {
-      // Kesalahan berasal dari respons server
-      res.status(error.response.status).json({ message: error.response.data });
-    } else {
-      // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  }
-};
-
-const getUserByNameProfile = async (req, res) => {
-  try {
-    const { name } = req.params;
-    const routerApiUrl = process.env.ROUTER_API_URL;
-
-    const response = await axios.get(`${routerApiUrl}/rest/user-manager/user-profile?user=${name}`);
-
-    // Kirim respons ke klien
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error fetching user:', error.message);
-
-    if (error.response) {
-      // Kesalahan berasal dari respons server
-      res.status(error.response.status).json({ message: error.response.data });
-    } else {
-      // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  }
-};
-
+// User CHR 
 const createProfile = async (req, res) => {
   try {
     // Mengambil data dari body permintaan
     const { name, password, attributes } = req.body;
-    const routerApiUrl = process.env.ROUTER_API_URL;
+    console.log('Request Body:', req.body);
 
     // Memeriksa apakah semua data yang diperlukan ada
     if (!name || !password || !attributes) {
@@ -61,12 +22,19 @@ const createProfile = async (req, res) => {
     }
 
     // Mengirim permintaan POST ke endpoint CHR
-    const response = await axios.post(`${routerApiUrl}/rest/user-manager/user`, {
+    const response = await axios.put(`${routerApiUrl}/rest/user-manager/user`, {
       name,
       password,
       attributes,
     }, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false }) // Nonaktifkan verifikasi SSL untuk pengembangan
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+      httpsAgent: agent,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
     // Kirim respons ke klien
@@ -75,38 +43,39 @@ const createProfile = async (req, res) => {
     console.error('Error creating user profile:', error.message);
 
     if (error.response) {
-      // Kesalahan berasal dari respons server
+      console.error('Error response data:', error.response.data); // Menampilkan data kesalahan
+      console.error('Error response status:', error.response.status); // Menampilkan status kode kesalahan
       res.status(error.response.status).json({ message: error.response.data });
     } else {
-      // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
+      console.error('Error without response:', error); // Menampilkan kesalahan lain
       res.status(500).json({ message: 'Internal Server Error' });
     }
   }
 };
 
-const createUserProfile = async (req, res) => {
+
+const getUserByName = async (req, res) => {
   try {
-    // Mengambil data dari body permintaan
-    const { user, profile } = req.body;
+
+    const name = req.query.name;
     const routerApiUrl = process.env.ROUTER_API_URL;
 
-    // Memeriksa apakah semua data yang diperlukan ada
-    if (!user || !profile) {
-      return res.status(400).json({ message: 'User and profile are required' });
-    }
+    console.log(name)
 
-    // Mengirim permintaan POST ke endpoint CHR
-    const response = await axios.post(`${routerApiUrl}/rest/user-manager/user-profile`, {
-      user,
-      profile,
-    }, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false }) // Nonaktifkan verifikasi SSL untuk pengembangan
+
+    const response = await axios.get(`${routerApiUrl}/rest/user-manager/user?name=${name}`, {
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+
+      httpsAgent: agent
     });
 
     // Kirim respons ke klien
-    res.status(201).json({ message: 'User profile created successfully', data: response.data });
+    res.json(response.data);
   } catch (error) {
-    console.error('Error creating user profile:', error.message);
+    console.error('Error fetching user:', error.message);
 
     if (error.response) {
       // Kesalahan berasal dari respons server
@@ -117,6 +86,7 @@ const createUserProfile = async (req, res) => {
     }
   }
 };
+
 
 const updateUser = async (req, res) => {
   try {
@@ -130,11 +100,18 @@ const updateUser = async (req, res) => {
     }
 
     // Mengirim permintaan PUT ke endpoint CHR untuk memperbarui user
-    const response = await axios.put(`${routerApiUrl}/rest/user-manager/user/${name}`, {
+    const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user/${name}`, {
       password,
       attributes,
     }, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false }) // Nonaktifkan verifikasi SSL untuk pengembangan
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+      httpsAgent: agent,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
     // Kirim respons ke klien
@@ -152,24 +129,141 @@ const updateUser = async (req, res) => {
   }
 };
 
-const updateUserProfile = async (req, res) => {
+const deleteUser = async (req, res) => {
+  try {
+    const { userName } = req.params;
+    if (!userName) {
+      return res.status(400).json({ message: 'User name is required' });
+    }
+
+    // Mengirim permintaan DELETE ke endpoint CHR untuk menghapus user
+    const response = await axios.delete(`${routerApiUrl}/rest/user-manager/user/${userName}`, {
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+      httpsAgent: agent,
+
+    });
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error.message);
+
+    if (error.response) {
+      res.status(error.response.status).json({ message: error.response.data });
+    } else {
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+};
+
+
+// User Profile
+
+const getUserByNameProfile = async (req, res) => {
+  try {
+    const name = req.query.name;
+    console.log(name)
+
+    const response = await axios.get(`${routerApiUrl}/rest/user-manager/user-profile?user=${name}`, {
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+
+      httpsAgent: agent
+    });
+
+
+    // Kirim respons ke klien
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching user:', error.message);
+
+    if (error.response) {
+      // Kesalahan berasal dari respons server
+      res.status(error.response.status).json({ message: error.response.data });
+    } else {
+      // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+};
+
+
+const createUserProfile = async (req, res) => {
   try {
     // Mengambil data dari body permintaan
     const { user, profile } = req.body;
-    const routerApiUrl = process.env.ROUTER_API_URL;
+
 
     // Memeriksa apakah semua data yang diperlukan ada
     if (!user || !profile) {
       return res.status(400).json({ message: 'User and profile are required' });
     }
 
-    // Mengirim permintaan PUT ke endpoint CHR untuk memperbarui user profile
-    const response = await axios.put(`${routerApiUrl}/rest/user-manager/user-profile/${user}`, {
+    console.log(req.body)
+
+    // Mengirim permintaan POST ke endpoint CHR
+    const response = await axios.put(`${routerApiUrl}/rest/user-manager/user-profile`, {
+      user,
       profile,
     }, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false }) // Nonaktifkan verifikasi SSL untuk pengembangan
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+
+      httpsAgent: agent,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
+    // Kirim respons ke klien
+    res.status(201).json({ message: 'User profile created successfully', data: response.data });
+  } catch (error) {
+    console.error('Error creating user profile:', error.message);
+
+    if (error.response) {
+      // Kesalahan berasal dari respons server
+      res.status(error.response.status).json({ message: error.response.data });
+    } else {
+      // Kesalahan berasal dari server kita sendiri (misalnya kesalahan jaringan)
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
+};
+
+
+const updateUserProfile = async (req, res) => {
+  try {
+    // Mengambil data dari body permintaan
+    const id = req.body[".id"];  // Gunakan notasi tanda kurung untuk mengakses ".id"
+    const profile = req.body.profile;
+    console.log(req.body)
+
+    // Memeriksa apakah semua data yang diperlukan ada
+    if (!id || !profile) {
+      return res.status(400).json({ message: 'User and profile are required' });
+    }
+
+    // Mengirim permintaan PUT ke endpoint CHR untuk memperbarui user profile
+    const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user-profile/${id}`, {
+      profile,
+    }, {
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+      httpsAgent: new https.Agent({
+        rejectUnauthorized: false
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
     // Kirim respons ke klien
     res.status(200).json({ message: 'User profile updated successfully', data: response.data });
   } catch (error) {
@@ -185,32 +279,6 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-const deleteUser = async (req, res) => {
-  try {
-    // Mengambil nama pengguna dari parameter URL
-    const { userName } = req.params;
-    const routerApiUrl = process.env.ROUTER_API_URL;
-
-    if (!userName) {
-      return res.status(400).json({ message: 'User name is required' });
-    }
-
-    // Mengirim permintaan DELETE ke endpoint CHR untuk menghapus user
-    const response = await axios.delete(`${routerApiUrl}/rest/user-manager/user/${userName}`, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false })
-    });
-
-    res.status(200).json({ message: 'User deleted successfully', data: response.data });
-  } catch (error) {
-    console.error('Error deleting user:', error.message);
-
-    if (error.response) {
-      res.status(error.response.status).json({ message: error.response.data });
-    } else {
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  }
-};
 
 const deleteUserProfile = async (req, res) => {
   try {
@@ -220,7 +288,12 @@ const deleteUserProfile = async (req, res) => {
       return res.status(400).json({ message: 'User profile is required' });
     }
     const response = await axios.delete(`${routerApiUrl}/rest/user-manager/user-profile/${userProfile}`, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false })
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+      httpsAgent: agent,
+
     });
 
     res.status(200).json({ message: 'User profile deleted successfully', data: response.data });
@@ -235,24 +308,31 @@ const deleteUserProfile = async (req, res) => {
   }
 };
 
+
+// SUSPEND CHR
 const suspendUser = async (req, res) => {
   try {
     const { userName } = req.params;
-    const routerApiUrl = process.env.ROUTER_API_URL;
+    const { disabled, comment } = req.body;
 
     if (!userName) {
       return res.status(400).json({ message: 'User name is required' });
     }
 
-    // Mendapatkan tanggal saat ini
-    const currentDate = new Date().toISOString().split('T')[0];
-
     // Mengirim permintaan PATCH ke endpoint CHR untuk menyuspend user
     const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user/${userName}`, {
-      disabled: "true",
-      comment: `Suspended by Wijaya on ${currentDate}`,
+      disabled,
+      comment,
     }, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false })
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+
+      httpsAgent: agent,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
     res.status(200).json({ message: 'User suspended successfully', data: response.data });
@@ -270,18 +350,32 @@ const suspendUser = async (req, res) => {
 const unsuspendUser = async (req, res) => {
   try {
     const { userName } = req.params;
-    const routerApiUrl = process.env.ROUTER_API_URL;
+    const { disabled, comment } = req.body;
+
+    console.log(req.body)
+
 
     if (!userName) {
       return res.status(400).json({ message: 'User name is required' });
     }
+    if (!disabled ) {
+      return res.status(400).json({ message: 'dissable and comment name is required' });
+    }
 
     // Mengirim permintaan PATCH ke endpoint CHR untuk mengunsuspend user
     const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user/${userName}`, {
-      disabled: "false",
-      comment: "",
+      disabled,
+      comment,
     }, {
-      httpsAgent: new https.Agent({ rejectUnauthorized: false })
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+
+      httpsAgent: agent,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
     res.status(200).json({ message: 'User unsuspended successfully', data: response.data });

@@ -7,15 +7,15 @@ router.get('/getUserByName', getUserByName);
 router.get('/getUserByNameProfile', getUserByNameProfile);
 router.post('/createProfile', createProfile);
 router.post('/createUserProfile', createUserProfile);
-router.put('/updateUser', updateUser);
-router.put('/updateUserProfile', updateUserProfile);
+router.patch('/updateUser', updateUser);
+router.patch('/updateUserProfile', updateUserProfile);
 router.delete('/user/:userName', deleteUser);
-router.delete('/user-profile/:userProfile', deleteUserProfile);
+router.delete('/deleteUserProfile/:userProfile', deleteUserProfile);
 
 // Route untuk menyuspend user
-router.patch('/user/:userName/suspend', suspendUser);
+router.patch('/suspendUser/:userName', suspendUser);
 
 // Route untuk mengunsuspend user
-router.patch('/user/:userName/unsuspend', unsuspendUser);
+router.patch('/unsuspendUser/:userName', unsuspendUser);
 
 module.exports = router;

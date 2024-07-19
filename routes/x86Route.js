@@ -4,7 +4,7 @@ const { checkIsActiveUserX86, kickUserX86, userQueueSimple } = require('../src/c
 
 // Route untuk memeriksa status pengguna di X86
 router.get('/isActiveUserX86', checkIsActiveUserX86);
-router.get('/kickUserX86', kickUserX86);
+router.post('/kickUserX86', kickUserX86);
 router.get('/userQueueSimple', userQueueSimple);
 
 module.exports = router;
