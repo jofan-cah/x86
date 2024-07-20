@@ -10,11 +10,13 @@ const maxnetDB = require('./config/db');
 // Mengimpor routes
 const x86Routes = require('./routes/x86Route');
 const chrRoutes = require('./routes/chrRoute');
+const sysServiceRoute = require('./routes/sysServiceRoute');
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/x86', x86Routes);
 app.use('/api/chr', chrRoutes);
+app.use('/api/sys', sysServiceRoute);
 
 
 // Root route

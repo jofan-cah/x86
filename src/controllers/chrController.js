@@ -358,7 +358,7 @@ const unsuspendUser = async (req, res) => {
     if (!userName) {
       return res.status(400).json({ message: 'User name is required' });
     }
-    if (!disabled ) {
+    if (!disabled) {
       return res.status(400).json({ message: 'dissable and comment name is required' });
     }
 
@@ -396,7 +396,7 @@ module.exports = {
   createProfile,
   createUserProfile,
   updateUser,
-  updateUserProfile,
+  // updateUserProfile,
   deleteUser,
   deleteUserProfile,
   suspendUser,
