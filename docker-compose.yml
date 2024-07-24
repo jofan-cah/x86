@@ -10,10 +10,10 @@ services:
       - DB_USER=root
       - DB_PASSWORD=hesoyam404@
     networks:
-      - servicerouter
+      - x86_default
     command: [ "node", "index.js" ]
 
 networks:
-  servicerouter:
+  x86_default:
     external: true
     driver: bridge
