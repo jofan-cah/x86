@@ -1,0 +1,20 @@
+version: '3'
+services:
+  app:
+    image: servicerouter
+    ports:
+      - "3090:3090"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=hesoyam404
+
+  db:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=hesoyam404
+    ports:
+      - "3306:3306"
