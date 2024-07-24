@@ -26,3 +26,4 @@ services:
 networks:
   servicerouter:
     external: true
+    driver: bridge
