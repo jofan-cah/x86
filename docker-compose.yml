@@ -15,7 +15,7 @@ services:
       - servicerouter
 
   db:
-    image: mysql:latest
+    image: mysql:8.0.37
     environment:
       - MYSQL_ROOT_PASSWORD=hesoyam404
     ports:
