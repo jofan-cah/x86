@@ -41,6 +41,38 @@
 #     driver: bridge
 
 
+# version: '3.8'
+
+# services:
+#   route-service:
+#     build: .
+#     ports:
+#       - "3090:3090"
+#     environment:
+#       DB_HOST: db
+#       DB_PORT: 3306
+#       DB_USER: root
+#       DB_PASSWORD: hesoyam404
+#       DB_NAME: maxnet_billing
+#     depends_on:
+#       - db
+#     networks:
+#       - mynetwork
+
+#   db:
+#     image: mysql:8.0
+#     environment:
+#       MYSQL_ROOT_PASSWORD: hesoyam404
+#       MYSQL_DATABASE: maxnet_billing
+#     ports:
+#       - "3306:3306"
+#     networks:
+#       - mynetwork
+
+# networks:
+#   mynetwork:
+
+
 version: '3.8'
 
 services:
@@ -49,25 +81,14 @@ services:
     ports:
       - "3090:3090"
     environment:
-      DB_HOST: db
+      DB_HOST: 103.151.33.111
       DB_PORT: 3306
       DB_USER: root
-      DB_PASSWORD: hesoyam404
+      DB_PASSWORD: Hehesoyam2024@
       DB_NAME: maxnet_billing
-    depends_on:
-      - db
-    networks:
-      - mynetwork
-
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: hesoyam404
-      MYSQL_DATABASE: maxnet_billing
-    ports:
-      - "3306:3306"
     networks:
       - mynetwork
 
 networks:
   mynetwork:
+    driver: bridge
