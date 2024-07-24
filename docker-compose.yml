@@ -20,3 +20,7 @@ services:
       - MYSQL_ROOT_PASSWORD=hesoyam404
     ports:
       - "3307:3306"
+
+networks:
+  servicerouter:
+    external: true
