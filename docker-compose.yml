@@ -1,7 +1,29 @@
+# version: '3.8'
+# services:
+#   app:
+#     image: servicerouter
+#     ports:
+#       - "3090:3090"
+#     environment:
+#       - DB_HOST=103.151.33.111
+#       - DB_PORT=3306
+#       - DB_USER=root
+#       - DB_PASSWORD=hesoyam404@
+#     networks:
+#       - x86_default
+#     command: [ "node", "index.js" ]
+
+# networks:
+#   x86_default:
+#     external: true
+#     driver: bridge
+
+
 version: '3.8'
 services:
   app:
-    image: servicerouter
+    build:
+      context: .
     ports:
       - "3090:3090"
     environment:
