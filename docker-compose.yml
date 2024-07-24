@@ -6,10 +6,10 @@ services:
     # depends_on:
     #   - db
     environment:
-      - DB_HOST=127.0.0.1
+      - DB_HOST=103.151.33.111
       - DB_PORT=3306
       - DB_USER=root
-      - DB_PASSWORD=hesoyam404
+      - DB_PASSWORD=hesoyam404@
     networks:
       - servicerouter
     command: [  "node", "index.js"]
