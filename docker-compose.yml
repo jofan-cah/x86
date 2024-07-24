@@ -82,7 +82,6 @@ services:
       - "3090:3090"
     environment:
       DB_HOST: 103.151.33.111
-      DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: Hehesoyam2024@
       DB_NAME: maxnet_billing
