@@ -1,10 +1,9 @@
+version: '3.8'
 services:
   app:
     image: servicerouter
     ports:
       - "3090:3090"
-    # depends_on:
-    #   - db
     environment:
       - DB_HOST=103.151.33.111
       - DB_PORT=3306
@@ -12,16 +11,7 @@ services:
       - DB_PASSWORD=hesoyam404@
     networks:
       - servicerouter
-    command: [  "node", "index.js"]
-
-  # db:
-  #   image: mysql:8.0.37
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=hesoyam404
-  #   ports:
-  #     - "3307:3306"
-  #   networks:
-  #     - servicerouter
+    command: [ "node", "index.js" ]
 
 networks:
   servicerouter:
