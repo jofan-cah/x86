@@ -8,7 +8,7 @@
 #       - DB_HOST=103.151.33.111
 #       - DB_PORT=3306
 #       - DB_USER=root
-#       - DB_PASSWORD=hesoyam404@
+#       - DB_PASSWORD=hesoyam404
 #     networks:
 #       - x86_default
 #     command: [ "node", "index.js" ]
@@ -49,7 +49,25 @@ services:
     ports:
       - "3090:3090"
     environment:
-      DB_HOST: 127.0.0.1
+      DB_HOST: db
+      DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: hesoyam404
       DB_NAME: maxnet_billing
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: hesoyam404
+      MYSQL_DATABASE: maxnet_billing
+    ports:
+      - "3306:3306"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
