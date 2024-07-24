@@ -12,6 +12,7 @@ services:
       - DB_PASSWORD=hesoyam404
     networks:
       - servicerouter
+    command: ["./wait-for-it.sh", "db:3306", "--", "node", "index.js"]
 
   db:
     image: mysql:8.0.37
