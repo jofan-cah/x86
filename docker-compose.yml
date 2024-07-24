@@ -11,6 +11,8 @@ services:
       - DB_PORT=3306
       - DB_USER=root
       - DB_PASSWORD=hesoyam404
+    networks:
+      - servicerouter
 
   db:
     image: mysql:latest
