@@ -5,6 +5,7 @@ const https = require('https');
 const Subscription = require('../../models/subscriptionsModel')
 
 const agent = require('../../helpers/http');
+const getFormattedDateTime = require('../../helpers/time');
 
 const routerApiUrl = process.env.ROUTER_API_URL;
 
@@ -309,6 +310,30 @@ const deleteUserProfile = async (req, res) => {
 };
 
 
+const patchUserStatus = async (disabled, comment, subsid) => {
+  try {
+    const formattedDateTime = getFormattedDateTime();
+    const response = await axios.patch(`${routerApiUrl}/rest/user-manager/user/${userName}`, {
+      disabled: "false",
+      comment: `Suspended by System on ${formattedDateTime}`,
+    }, {
+      auth: {
+        username: process.env.ROUTER_API_USERNAME,
+        password: process.env.ROUTER_API_PASSWORD
+      },
+      httpsAgent: agent,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending PATCH request:', error.message);
+    throw error; // Propagate the error to be handled by the caller
+  }
+};
+
+
 // SUSPEND CHR
 const suspendUser = async (req, res) => {
   try {
@@ -348,12 +373,10 @@ const suspendUser = async (req, res) => {
 };
 
 const unsuspendUser = async (req, res) => {
+
   try {
     const { userName } = req.params;
     const { disabled, comment } = req.body;
-
-    console.log(req.body)
-
 
     if (!userName) {
       return res.status(400).json({ message: 'User name is required' });
